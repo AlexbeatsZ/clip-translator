@@ -1,0 +1,377 @@
+html:has(.panel),
+body:has(.panel) {
+  background: var(--surface);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+/* ---------- title bar ---------- */
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  height: 36px;
+  padding: 0 6px 0 12px;
+}
+
+.bar-spacer {
+  flex: 1;
+  align-self: stretch;
+}
+
+.source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.source-chip svg {
+  color: var(--text-3);
+}
+
+.panel-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.panel-content {
+  padding: 0 14px 12px;
+}
+
+/* ---------- loading ---------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0 6px;
+}
+
+.loading-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+}
+
+.loading-label .spinner {
+  color: var(--accent);
+}
+
+.stage-track {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage-track li {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+.stage-track li.done {
+  background: var(--accent);
+}
+
+.stage-track li.active {
+  background: linear-gradient(90deg, var(--accent) 0 40%, color-mix(in srgb, var(--accent) 25%, transparent) 40%);
+  background-size: 250% 100%;
+  animation: track 1.2s linear infinite;
+}
+
+@keyframes track {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton span {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--text) 7%, transparent) 0%,
+    color-mix(in srgb, var(--text) 12%, transparent) 50%,
+    color-mix(in srgb, var(--text) 7%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.spinner.small {
+  width: 11px;
+  height: 11px;
+  border-width: 1.5px;
+  color: var(--text-3);
+}
+
+/* ---------- text result ---------- */
+
+.source-text {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.source-text.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.link-btn {
+  padding: 0;
+  margin-top: 2px;
+  border: 0;
+  background: none;
+  color: var(--accent-text);
+  font-size: 12px;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.translation-block {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 0.5px solid var(--border);
+}
+
+.lang-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+  color: var(--text-3);
+  font-size: 11.5px;
+}
+
+.lang-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent-text);
+}
+
+.lang-select svg {
+  position: absolute;
+  right: 0;
+  pointer-events: none;
+}
+
+.lang-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 1px 16px 1px 4px;
+  margin: 0 -4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.lang-select select:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.translated-text {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  transition: opacity 0.15s;
+}
+
+.translated-text.stale {
+  opacity: 0.45;
+}
+
+.inline-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--danger);
+}
+
+.inline-error p {
+  margin: 0;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.inline-error.boxed {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--danger-soft);
+}
+
+/* ---------- footer ---------- */
+
+.result-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.provider-tag {
+  color: var(--text-3);
+  font-size: 11.5px;
+}
+
+.foot-error,
+.foot-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.foot-error {
+  color: var(--danger);
+}
+
+.foot-note {
+  color: var(--text-2);
+}
+
+.foot-note .link-btn {
+  margin: 0;
+}
+
+/* ---------- empty / error ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 8px;
+  text-align: center;
+}
+
+.empty-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  color: var(--text-2);
+}
+
+.empty-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.empty-desc {
+  margin: 0 0 6px;
+  max-width: 34ch;
+  color: var(--text-2);
+  font-size: 12.5px;
+  word-break: break-word;
+}
+
+/* ---------- image result ---------- */
+
+.notice {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 12px;
+}
+
+.image-frame {
+  display: flex;
+  justify-content: center;
+  border-radius: 8px;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--text) 5%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
+  box-shadow: inset 0 0 0 0.5px var(--border);
+  overflow: hidden;
+}
+
+.image-frame img {
+  display: block;
+  max-width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+}
+
+.segments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.segments li {
+  padding: 8px 0;
+}
+
+.segments li + li {
+  border-top: 0.5px solid var(--border);
+}
+
+.segments p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.segment-source {
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.segment-translated {
+  margin-top: 2px !important;
+  font-size: 14px;
+}

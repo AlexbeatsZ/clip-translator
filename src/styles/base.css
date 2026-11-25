@@ -1,0 +1,275 @@
+:root {
+  color-scheme: light dark;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Segoe UI Variable Text", "Segoe UI",
+    "Microsoft YaHei UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --bg: #f5f5f7;
+  --sidebar: #ebebef;
+  --surface: #ffffff;
+  --surface-2: #fafafb;
+  --hover: rgba(0, 0, 0, 0.045);
+  --pressed: rgba(0, 0, 0, 0.08);
+  --selected: rgba(0, 0, 0, 0.07);
+  --field: #ffffff;
+  --border: rgba(0, 0, 0, 0.085);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  --text: #1d1d1f;
+  --text-2: #5d5d66;
+  --text-3: #8c8c95;
+
+  --accent: #2f6bff;
+  --accent-hover: #2560ec;
+  --accent-soft: rgba(47, 107, 255, 0.1);
+  --accent-text: #1f5ae8;
+  --on-accent: #ffffff;
+  --ok: #1a9655;
+  --ok-soft: rgba(26, 150, 85, 0.12);
+  --warn: #b8720a;
+  --warn-soft: rgba(214, 140, 0, 0.13);
+  --danger: #d1342b;
+  --danger-soft: rgba(209, 52, 43, 0.1);
+
+  --shadow-card: 0 0 0 0.5px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.16), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  --focus-ring: 0 0 0 3px rgba(47, 107, 255, 0.28);
+  --radius: 10px;
+  --radius-sm: 7px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e20;
+    --sidebar: #262629;
+    --surface: #2a2a2d;
+    --surface-2: #26262a;
+    --hover: rgba(255, 255, 255, 0.06);
+    --pressed: rgba(255, 255, 255, 0.1);
+    --selected: rgba(255, 255, 255, 0.09);
+    --field: #1f1f22;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text: #f2f2f4;
+    --text-2: #b0b0b8;
+    --text-3: #7f7f88;
+
+    --accent: #4c82ff;
+    --accent-hover: #6492ff;
+    --accent-soft: rgba(76, 130, 255, 0.16);
+    --accent-text: #8cb0ff;
+    --ok: #3dc47e;
+    --ok-soft: rgba(61, 196, 126, 0.15);
+    --warn: #e5a53c;
+    --warn-soft: rgba(229, 165, 60, 0.15);
+    --danger: #ff6b61;
+    --danger-soft: rgba(255, 107, 97, 0.14);
+
+    --shadow-card: 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+    --shadow-pop: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+    --focus-ring: 0 0 0 3px rgba(76, 130, 255, 0.4);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: default;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- shared controls ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-strong);
+  background: var(--surface);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+}
+
+.btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--surface) 92%, var(--text) 8%);
+}
+
+.btn:active:not(:disabled) {
+  background: color-mix(in srgb, var(--surface) 86%, var(--text) 14%);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 85%, black 15%);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+.btn-sm {
+  height: 24px;
+  padding: 0 9px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2);
+  transition: background 0.12s, color 0.12s;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.icon-btn:active:not(:disabled) {
+  background: var(--pressed);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+}
+
+.icon-btn[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.kbd-group {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  border: 0.5px solid var(--border-strong);
+  box-shadow: 0 1px 0 var(--border-strong);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,16 @@
+/target
+
+# Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
+# More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
+Cargo.lock
+# Native addon build artifacts
+bindings/node/*.node
+# Node package local dependencies
+bindings/node/node_modules/
+bindings/node/bun.lock
+
+# Node release scratch artifacts
+bindings/node/artifacts/
+bindings/node/npm/**/*.node
+bindings/node/*.tgz
+bindings/node/package-lock.json
