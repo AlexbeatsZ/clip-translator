@@ -707,8 +707,14 @@ pub fn run() {
             ocr_engine: Arc::new(Mutex::new(None)),
             request_seq: AtomicU64::new(0),
         })
-        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            let _ = show_main_window(app);
+        // Launching again focuses the running instance; `--translate` instead runs one
+        // translation (handy for Shortcuts/Raycast bindings and for automated testing).
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            if args.iter().any(|arg| arg == "--translate") {
+                process_shortcut(app.clone());
+            } else {
+                let _ = show_main_window(app);
+            }
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build());
