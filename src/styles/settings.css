@@ -408,6 +408,10 @@
   background: linear-gradient(160deg, #3b7bf6, #2a5fd8);
 }
 
+.provider-mark.yandex {
+  background: linear-gradient(160deg, #fc3f1d, #c62828);
+}
+
 .key-form {
   display: flex;
   flex-direction: column;

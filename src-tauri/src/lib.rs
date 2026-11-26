@@ -761,8 +761,10 @@ pub fn run() {
             }
 
             // First run (no provider configured yet): open settings. Otherwise start quietly.
-            // Keyless free providers do not count as "configured" for the first-run prompt.
-            let configured = translation::has_api_key("deepl").unwrap_or(false)
+            // Keyless providers only count once the user has explicitly selected one.
+            let active_provider = settings::load(&handle).provider;
+            let configured = translation::is_keyless(&active_provider)
+                || translation::has_api_key("deepl").unwrap_or(false)
                 || translation::has_api_key("google").unwrap_or(false);
             if configured {
                 #[cfg(target_os = "macos")]

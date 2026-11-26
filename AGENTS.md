@@ -4,7 +4,7 @@ Build a cross-platform desktop translator (ClipLingo) for macOS and Windows. A s
 
 # Current State
 
-- Version 0.2.0, Tauri 2 + React 19 + TypeScript, Rust core. Repo: `AlexbeatsZ/clip-translator` (private).
+- Version 0.2.1, Tauri 2 + React 19 + TypeScript, Rust core. Repo: `AlexbeatsZ/clip-translator` (private).
 - Implemented and verified on macOS (Apple Silicon, Xcode 26):
   - Menu-bar app (tray menu: 翻译 / 设置 / 退出), single instance, first run opens settings.
   - Global shortcut (default ⌥⇧T) → selection (AX, clipboard-preserving fallback) → clipboard image → clipboard text.
@@ -13,7 +13,7 @@ Build a cross-platform desktop translator (ClipLingo) for macOS and Windows. A s
   - DeepL (Free/Pro auto endpoint) and Google Cloud Translation; keys in Keychain / Credential Manager; connection test.
   - Keyless Yandex provider (unofficial mobile endpoint; needs a mobile User-Agent or it returns 403).
   - Settings UI rewritten from scratch (see `docs/design/ui.md`).
-- Release v0.2.0 (signed .app/.dmg, arm64) is on GitHub Releases.
+- Release v0.2.1 (signed .app/.dmg, arm64) is on GitHub Releases and installed at `/Applications/ClipLingo.app`.
 - Not yet verified: physical ⌥⇧T press on the release build, real DeepL/Google requests (no API key on the dev machine), Windows build/behaviour, multi-monitor/mixed DPI placement, outside-click dismissal in a real full-screen app.
 
 # Active Work
