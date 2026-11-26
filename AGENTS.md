@@ -31,7 +31,7 @@ Build a cross-platform desktop translator (ClipLingo) for macOS and Windows. A s
 - Checks: `pnpm build` and `cd src-tauri && cargo fmt --check && cargo test`.
 - Local-model tests: `cargo test --lib -- --ignored` (OCR, compose). Visual pipeline check: `CLIPLINGO_SAMPLE=in.png CLIPLINGO_OUT=out.png cargo test --lib -- --ignored ocr_and_compose --nocapture`.
 - Release (macOS): `pnpm tauri build` — signed with the fixed `Local Development Code Signing` identity (`bundle.macOS.signingIdentity`); verify with `codesign -d -r- <app>` (must contain `certificate leaf`).
-- Windows packaging must be validated on Windows.
+- Windows: build on OMEN (`pnpm tauri build --bundles nsis`, ~15 min cold). The NSIS installer defaults to `%LOCALAPPDATA%\ClipLingo`, which violates the layout spec; always install with `/S /D=%LOCALAPPDATA%\Programs\ClipLingo` (`/D` last, unquoted). OMEN and ROG have 0.2.2 installed there.
 
 # Durable Lessons
 
