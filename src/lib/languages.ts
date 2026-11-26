@@ -42,6 +42,8 @@ export interface ProviderMeta {
   keyPlaceholder: string;
   keyHelp: string;
   keyUrl: string;
+  /** Works without an API key (unofficial public endpoint). */
+  keyless?: boolean;
 }
 
 export const PROVIDERS: ProviderMeta[] = [
@@ -64,6 +66,17 @@ export const PROVIDERS: ProviderMeta[] = [
     keyPlaceholder: "AIza…",
     keyHelp: "需在 Google Cloud 项目中启用 Cloud Translation API。",
     keyUrl: "https://console.cloud.google.com/apis/credentials",
+  },
+  {
+    id: "yandex",
+    name: "Yandex 翻译（免费）",
+    shortName: "Yandex",
+    description: "无需密钥，使用 Yandex 移动端公开接口，非官方",
+    keyLabel: "",
+    keyPlaceholder: "",
+    keyHelp: "",
+    keyUrl: "",
+    keyless: true,
   },
 ];
 

@@ -24,6 +24,11 @@ pub fn is_missing_key_error(error: &str) -> bool {
     error.starts_with(MISSING_KEY_PREFIX)
 }
 
+/// Providers that work without an API key (unofficial public endpoints).
+pub fn is_keyless(provider: &str) -> bool {
+    matches!(provider, "yandex")
+}
+
 pub fn save_api_key(provider: &str, api_key: &str) -> Result<(), String> {
     let provider = normalize_provider(provider)?;
     let entry = keyring::Entry::new(KEYCHAIN_SERVICE, provider)
@@ -35,6 +40,9 @@ pub fn save_api_key(provider: &str, api_key: &str) -> Result<(), String> {
 
 pub fn has_api_key(provider: &str) -> Result<bool, String> {
     let provider = normalize_provider(provider)?;
+    if is_keyless(provider) {
+        return Ok(true);
+    }
     let entry = keyring::Entry::new(KEYCHAIN_SERVICE, provider)
         .map_err(|error| format!("无法访问系统凭据库：{error}"))?;
     match entry.get_password() {
@@ -87,6 +95,13 @@ pub async fn translate_many(
         return Err("单次翻译内容超过 25,000 个字符，请缩短文本".into());
     }
 
+    if is_keyless(provider) {
+        return match provider {
+            "yandex" => translate_yandex_many(texts, source_language, target_language).await,
+            _ => unreachable!(),
+        };
+    }
+
     let entry = keyring::Entry::new(KEYCHAIN_SERVICE, provider)
         .map_err(|error| format!("无法访问系统凭据库：{error}"))?;
     let api_key = entry
@@ -104,6 +119,7 @@ fn normalize_provider(provider: &str) -> Result<&'static str, String> {
     match provider.trim().to_ascii_lowercase().as_str() {
         "deepl" => Ok("deepl"),
         "google" | "google-cloud" => Ok("google"),
+        "yandex" => Ok("yandex"),
         _ => Err(format!("不支持的翻译服务：{provider}")),
     }
 }
@@ -112,6 +128,7 @@ pub fn provider_label(provider: &str) -> &'static str {
     match provider {
         "deepl" => "DeepL",
         "google" => "Google Cloud Translation",
+        "yandex" => "Yandex 翻译（免费）",
         _ => "翻译服务",
     }
 }
@@ -285,6 +302,89 @@ async fn translate_google_many(
         .collect())
 }
 
+fn random_hex32() -> String {
+    use std::hash::{BuildHasher, Hasher};
+    let state = std::collections::hash_map::RandomState::new();
+    let mut out = String::with_capacity(32);
+    for i in 0..2u8 {
+        let mut hasher = state.build_hasher();
+        hasher.write_u8(i);
+        out.push_str(&format!("{:016x}", hasher.finish()));
+    }
+    out
+}
+
+fn yandex_lang(provider_lang: &str, source: &str, target: &str) -> String {
+    let map = |code: &str| match code.to_ascii_lowercase().as_str() {
+        "zh-tw" => "zh".to_owned(),
+        other => other.to_owned(),
+    };
+    let _ = provider_lang;
+    let target = map(target);
+    match source.trim().to_ascii_lowercase().as_str() {
+        "" | "auto" => target,
+        _ => format!("{}-{target}", map(source)),
+    }
+}
+
+#[derive(Deserialize)]
+struct YandexResponse {
+    code: Option<u32>,
+    message: Option<String>,
+    text: Option<Vec<String>>,
+}
+
+/// Unofficial Yandex Translate mobile endpoint (same one the Android app uses). No key needed.
+async fn translate_yandex_many(
+    texts: &[String],
+    source_language: &str,
+    target_language: &str,
+) -> Result<Vec<String>, String> {
+    let lang = yandex_lang("yandex", source_language, target_language);
+    let mut form: Vec<(&str, String)> = vec![("lang", lang), ("format", "text".into())];
+    for text in texts {
+        form.push(("text", text.clone()));
+    }
+    let url = format!(
+        "https://translate.yandex.net/api/v1/tr.json/translate?id={}-0-0&srv=android",
+        random_hex32()
+    );
+    let response = http_client()
+        .post(url)
+        // The endpoint rejects requests without the mobile client's User-Agent.
+        .header(
+            "User-Agent",
+            "ru.yandex.translate/21.15.4.21402814 (Android 11)",
+        )
+        .form(&form)
+        .send()
+        .await
+        .map_err(|error| format!("连接 Yandex 失败：{error}"))?;
+    let status = response.status();
+    if !status.is_success() {
+        return Err(match status.as_u16() {
+            429 => "Yandex 请求过于频繁，请稍后再试".into(),
+            _ => format!("Yandex 返回 HTTP {status}"),
+        });
+    }
+    let body: YandexResponse = response
+        .json()
+        .await
+        .map_err(|error| format!("解析 Yandex 响应失败：{error}"))?;
+    if body.code.is_some_and(|code| code != 200) {
+        return Err(format!(
+            "Yandex 翻译失败（{}）：{}",
+            body.code.unwrap_or_default(),
+            body.message.unwrap_or_default()
+        ));
+    }
+    let translated = body.text.unwrap_or_default();
+    if translated.len() != texts.len() {
+        return Err("Yandex 返回的译文数量与原文不一致".into());
+    }
+    Ok(translated)
+}
+
 #[cfg(test)]
 mod tests {
     use super::{is_missing_key_error, language_code};
@@ -316,6 +416,27 @@ mod tests {
             Some("zh-TW")
         );
         assert_eq!(language_code("google", "ja", true).as_deref(), Some("ja"));
+    }
+
+    #[test]
+    fn yandex_lang_pairs() {
+        assert_eq!(super::yandex_lang("yandex", "auto", "zh"), "zh");
+        assert_eq!(super::yandex_lang("yandex", "en", "zh-TW"), "en-zh");
+    }
+
+    #[test]
+    #[ignore = "network"]
+    fn free_providers_live() {
+        for provider in ["yandex"] {
+            let out = tauri::async_runtime::block_on(super::translate(
+                provider,
+                "Hello, world!",
+                "en",
+                "zh",
+            ));
+            println!("{provider}: {out:?}");
+            assert!(out.is_ok());
+        }
     }
 
     #[test]

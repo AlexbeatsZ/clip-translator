@@ -11,6 +11,7 @@ Build a cross-platform desktop translator (ClipLingo) for macOS and Windows. A s
   - Floating result panel: near cursor, fits content, non-activating, closes on outside click/Esc, pin, stage progress, retranslate to another target language, copy/save.
   - Local OCR (RapidOCR + PP-OCRv6 Small) and image reconstruction (flat fill or PatchMatch inpaint, colour-matched CJK typesetting).
   - DeepL (Free/Pro auto endpoint) and Google Cloud Translation; keys in Keychain / Credential Manager; connection test.
+  - Keyless Yandex provider (unofficial mobile endpoint; needs a mobile User-Agent or it returns 403).
   - Settings UI rewritten from scratch (see `docs/design/ui.md`).
 - Release v0.2.0 (signed .app/.dmg, arm64) is on GitHub Releases.
 - Not yet verified: physical ⌥⇧T press on the release build, real DeepL/Google requests (no API key on the dev machine), Windows build/behaviour, multi-monitor/mixed DPI placement, outside-click dismissal in a real full-screen app.
@@ -43,6 +44,8 @@ Build a cross-platform desktop translator (ClipLingo) for macOS and Windows. A s
 - Release links ONNX Runtime's prebuilt static lib, which needs compiler-rt (`___isPlatformVersionAtLeast`); `src-tauri/build.rs` links `libclang_rt.osx.a` from `xcrun clang --print-resource-dir`. Debug builds hid this.
 - `clip-translator --translate` on a running instance triggers one translation (single-instance args); use it for automation/tests instead of synthetic CGEvent hotkeys, which proved unreliable.
 - The interactive shell has `noclobber`; use `>|` when re-creating log files.
+
+- Google free `client=gtx` endpoint works from curl but reqwest gets a 429 "Sorry" bot-check page; do not try to evade it.
 
 # Docs Index
 

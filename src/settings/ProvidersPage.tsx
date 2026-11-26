@@ -39,15 +39,61 @@ export function ProvidersPage({ state }: { state: SettingsState }) {
                   <span className="row-title">{provider.name}</span>
                   <span className="row-desc">{provider.description}</span>
                 </span>
-                <span className={`pill ${configured ? "ok" : "muted"}`}>{configured ? "已配置" : "未配置"}</span>
+                <span className={`pill ${configured ? "ok" : "muted"}`}>{provider.keyless ? "免密钥" : configured ? "已配置" : "未配置"}</span>
               </button>
             );
           })}
         </div>
       </Group>
 
-      <ProviderKey key={active} provider={active} configured={providerStatus[active]} vault={vault} onChanged={state.refreshProviders} />
+      {providerMeta(active).keyless ? (
+        <FreeProvider key={active} provider={active} />
+      ) : (
+        <ProviderKey key={active} provider={active} configured={providerStatus[active]} vault={vault} onChanged={state.refreshProviders} />
+      )}
     </>
+  );
+}
+
+function FreeProvider({ provider }: { provider: ProviderId }) {
+  const meta = providerMeta(provider);
+  const [test, setTest] = useState<TestState>({ status: "idle" });
+  const runTest = async () => {
+    setTest({ status: "running" });
+    try {
+      setTest({ status: "ok", sample: await api.testProvider(provider) });
+    } catch (err) {
+      setTest({ status: "error", message: errorMessage(err) });
+    }
+  };
+  return (
+    <Group
+      title={meta.shortName}
+      footer={
+        <>
+          <ShieldCheck size={13} />
+          <span>非官方公开接口，无需密钥，稳定性无保证；识别出的文字会发送到对应服务器。</span>
+        </>
+      }
+    >
+      <div className="row">
+        <span className="row-text">
+          <span className="row-title">无需配置</span>
+          <span className="row-desc">选中即可使用</span>
+        </span>
+        <div className="row-actions">
+          <button type="button" className="btn" onClick={() => void runTest()} disabled={test.status === "running"}>
+            {test.status === "running" ? <span className="spinner" /> : "测试连接"}
+          </button>
+        </div>
+      </div>
+      {test.status === "ok" && (
+        <div className="row-note ok">
+          <Check size={13} /> 连接正常 · “Hello, world!” → <span className="selectable">{test.sample}</span>
+        </div>
+      )}
+      {test.status === "error" && <div className="row-note error">{test.message}</div>}
+    </Group>
   );
 }
 

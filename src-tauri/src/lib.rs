@@ -302,6 +302,7 @@ fn get_provider_status() -> Result<serde_json::Value, String> {
     Ok(serde_json::json!({
         "deepl": translation::has_api_key("deepl")?,
         "google": translation::has_api_key("google")?,
+        "yandex": true,
     }))
 }
 
@@ -760,6 +761,7 @@ pub fn run() {
             }
 
             // First run (no provider configured yet): open settings. Otherwise start quietly.
+            // Keyless free providers do not count as "configured" for the first-run prompt.
             let configured = translation::has_api_key("deepl").unwrap_or(false)
                 || translation::has_api_key("google").unwrap_or(false);
             if configured {

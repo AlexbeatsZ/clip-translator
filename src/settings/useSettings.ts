@@ -28,7 +28,7 @@ export function useSettings(): SettingsState {
   const [loaded, setLoaded] = useState(false);
   const [info, setInfo] = useState<AppInfo>({ version: "", platform: navigator.userAgent.includes("Windows") ? "windows" : "macos" });
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
-  const [providerStatus, setProviderStatus] = useState<ProviderStatus>({ deepl: false, google: false });
+  const [providerStatus, setProviderStatus] = useState<ProviderStatus>({ deepl: false, google: false, yandex: true });
   const [permission, setPermission] = useState<SelectionPermission>({ status: "unknown" });
   const [hotkey, setHotkey] = useState("");
   const [saveError, setSaveError] = useState("");

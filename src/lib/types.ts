@@ -1,4 +1,4 @@
-export type ProviderId = "deepl" | "google";
+export type ProviderId = "deepl" | "google" | "yandex";
 
 export type Platform = "macos" | "windows" | "linux";
 

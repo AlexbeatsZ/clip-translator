@@ -17,7 +17,7 @@ let preferences: Preferences = {
   imageReplacement: true,
   keepOriginal: true,
 };
-let providerStatus = { deepl: params.get("configured") !== "0", google: false };
+let providerStatus = { deepl: params.get("configured") !== "0", google: false, yandex: true };
 let hotkey = "Alt+Shift+KeyT";
 
 function emit(event: string, payload: unknown) {
