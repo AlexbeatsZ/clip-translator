@@ -122,7 +122,7 @@ export async function mockInvoke<T>(command: string, args: Record<string, unknow
   const result = (() => {
     switch (command) {
       case "get_app_info":
-        return { version: "0.2.1", platform: params.get("platform") ?? "macos" };
+        return { version: "0.2.2", platform: params.get("platform") ?? "macos" };
       case "get_preferences":
         return preferences;
       case "save_preferences":

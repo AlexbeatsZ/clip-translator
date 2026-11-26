@@ -1,6 +1,6 @@
 [package]
 name = "clip-translator"
-version = "0.2.1"
+version = "0.2.2"
 description = "A cross-platform clipboard-first desktop translator"
 authors = ["ClipLingo contributors"]
 edition = "2024"
